@@ -1,6 +1,9 @@
+import Search from './components/Search'
+import { useState } from 'react'
 import './App.css'
 
 function App() {
+  const [searchItem, setSearchItem] = useState('');
 
   return (
     <main>
@@ -12,7 +15,8 @@ function App() {
             <h1>Find <span className="text-gradient">Movies</span> You&apos;ll Enjoy Without the Hassle</h1>
           </header>
 
-          <p>Search</p>
+          <Search searchItem={searchItem} setSearchItem={setSearchItem}/>
+          <h1 className="text-white">{searchItem}</h1>
         </div>
       </div>
     </main>
