@@ -1,4 +1,5 @@
 import Search from './components/Search'
+import Spinner from './components/Spinner'
 import { Fragment, useEffect, useState } from 'react'
 import './App.css'
 
@@ -66,7 +67,7 @@ function App() {
             <h2 className='mt-[40px]'>All Movies</h2>
 
             {isLoading ? (
-              <p className="text-white">Loading...</p>
+              <Spinner />
             ) : errorMsg ? (
               <p className="text-red-500">{errorMsg}</p>
             ) : (
