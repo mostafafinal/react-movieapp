@@ -2,6 +2,7 @@ import Search from './components/Search'
 import Spinner from './components/Spinner'
 import { Fragment, useEffect, useState } from 'react'
 import './App.css'
+import MovieCard from './components/MovieCard'
 
 const API_OPTIONS = {
   method: 'GET',
@@ -73,9 +74,7 @@ function App() {
             ) : (
               <ul>
                 {movieList.map(movie => (
-                  <Fragment key={movie.id}>
-                    <p className="text-white">{movie.title}</p>
-                  </Fragment>
+                  <MovieCard key={movie.id} movie={movie}/>
                 ))}
               </ul>
             )}
