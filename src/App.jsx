@@ -18,12 +18,12 @@ function App() {
   const [errorMsg, setErrorMsg] = useState('');
   const [movieList, setMovieList] = useState([]);
 
-  const fetchMovies = async () => {
+  const fetchMovies = async (query = '') => {
     setIsLoading(true);
     setErrorMsg('');
   
     try {
-      const endpoints = `${import.meta.env.VITE_TMDB_API_BASE_URL}/discover/movie?sort_by=popularity.desc`;
+      const endpoints = query? `${import.meta.env.VITE_TMDB_API_BASE_URL}/search/movie?query=${encodeURIComponent(query)}` : `${import.meta.env.VITE_TMDB_API_BASE_URL}/discover/movie?sort_by=popularity.desc`;
   
       const res = await fetch(endpoints, API_OPTIONS);
   
@@ -49,8 +49,8 @@ function App() {
   }
 
   useEffect(() => {
-    fetchMovies()
-  }, []);
+    fetchMovies(searchItem)
+  }, [searchItem]);
 
   return (
     <main>
