@@ -1,8 +1,9 @@
+import { useEffect, useState } from 'react'
+import { useDebounce } from 'react-use'
 import Search from './components/Search'
 import Spinner from './components/Spinner'
-import { Fragment, useEffect, useState } from 'react'
-import './App.css'
 import MovieCard from './components/MovieCard'
+import './App.css'
 
 const API_OPTIONS = {
   method: 'GET',
@@ -14,9 +15,12 @@ const API_OPTIONS = {
 
 function App() {
   const [searchItem, setSearchItem] = useState('');
+  const [debouncedSearchItem, setDebouncedSearchItem] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [movieList, setMovieList] = useState([]);
+
+  useDebounce(() => setDebouncedSearchItem(searchItem), 500, [searchItem]);
 
   const fetchMovies = async (query = '') => {
     setIsLoading(true);
@@ -49,8 +53,8 @@ function App() {
   }
 
   useEffect(() => {
-    fetchMovies(searchItem)
-  }, [searchItem]);
+    fetchMovies(debouncedSearchItem)
+  }, [debouncedSearchItem]);
 
   return (
     <main>
