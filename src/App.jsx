@@ -4,6 +4,7 @@ import Search from './components/Search'
 import Spinner from './components/Spinner'
 import MovieCard from './components/MovieCard'
 import './App.css'
+import { updateSearchTerm } from './appwrite'
 
 const API_OPTIONS = {
   method: 'GET',
@@ -20,7 +21,7 @@ function App() {
   const [errorMsg, setErrorMsg] = useState('');
   const [movieList, setMovieList] = useState([]);
 
-  useDebounce(() => setDebouncedSearchItem(searchItem), 500, [searchItem]);
+  useDebounce(() => setDebouncedSearchItem(searchItem), 1000, [searchItem]);
 
   const fetchMovies = async (query = '') => {
     setIsLoading(true);
@@ -43,6 +44,10 @@ function App() {
       }
   
       setMovieList(data.results || []);
+
+      if (query && data.results.length > 0) {
+        await updateSearchTerm(query, data.results[0])
+      }
     } catch (err) {
       console.error(`Error fetching movies: ${err}`);
   
