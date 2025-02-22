@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react'
-import { useDebounce } from 'react-use'
 import Search from './components/Search'
 import Spinner from './components/Spinner'
+import TrendingMovies from './components/TrendingMovies'
 import MovieCard from './components/MovieCard'
+import { useEffect, useState } from 'react'
+import { useDebounce } from 'react-use'
+import { getTrendingMovies, updateSearchTerm } from './appwrite'
 import './App.css'
-import { updateSearchTerm } from './appwrite'
 
 const API_OPTIONS = {
   method: 'GET',
@@ -19,6 +20,7 @@ function App() {
   const [debouncedSearchItem, setDebouncedSearchItem] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [trendingMovies, setTrendingMovies] = useState([]);
   const [movieList, setMovieList] = useState([]);
 
   useDebounce(() => setDebouncedSearchItem(searchItem), 1000, [searchItem]);
@@ -28,7 +30,7 @@ function App() {
     setErrorMsg('');
   
     try {
-      const endpoints = query? `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query)}` : `${import.meta.env.VITE_TMDB_API_BASE_URL}/discover/movie?sort_by=popularity.desc`;
+      const endpoints = query? `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query)}` : `https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc`;
   
       const res = await fetch(endpoints, API_OPTIONS);
   
@@ -57,9 +59,23 @@ function App() {
     }
   }
 
+  const loadTrendingMovies = async () => {
+    try {
+      const trendingMovies = await getTrendingMovies();
+
+      setTrendingMovies(trendingMovies);
+    } catch (error) {
+      console.error(`Error fetching trending movies: ${error}`);
+    }
+  }
+
   useEffect(() => {
     fetchMovies(debouncedSearchItem)
   }, [debouncedSearchItem]);
+
+  useEffect(() => {
+    loadTrendingMovies()
+  }, []);
 
   return (
     <main>
@@ -73,8 +89,14 @@ function App() {
             <Search searchItem={searchItem} setSearchItem={setSearchItem}/>
           </header>
 
+          {trendingMovies.length > 0 && (
+            <section className="trending">
+            <h2>Trending Movies</h2>
+            <TrendingMovies movies={trendingMovies}/>
+          </section>
+          )}
           <section className='all-movies'>
-            <h2 className='mt-[40px]'>All Movies</h2>
+            <h2>All Movies</h2>
 
             {isLoading ? (
               <Spinner />
